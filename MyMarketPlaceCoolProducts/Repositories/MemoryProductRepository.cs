@@ -11,12 +11,9 @@ namespace MyMarketPlaceCoolProducts.Repositories
     {
         private readonly ProductDbContext Context;
 
-        public MemoryProductRepository()
+        public MemoryProductRepository(ProductDbContext _Context)
         {
-            var options = new DbContextOptionsBuilder<ProductDbContext>()
-                .UseInMemoryDatabase(databaseName: "Products")
-                .Options;
-            Context = new ProductDbContext(options);
+            Context = _Context;
         }
 
         public IList<Product> FindAll() => Context.Products.ToListAsync().Result;

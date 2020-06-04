@@ -18,10 +18,8 @@ namespace MyMarketPlaceCoolProducts.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Product>> Get()
-        {
-            return CreatedAtAction(nameof(Get), Service.GetProducts());
-        }
+        public ActionResult<IEnumerable<Product>> Get() =>
+            Ok(Service.GetProducts());
 
         [HttpDelete("{_Id}")]
         public IActionResult DeleteById(long _Id)
@@ -56,7 +54,7 @@ namespace MyMarketPlaceCoolProducts.Controllers
             Product Product = Service.GetById(_Id);
             if (Product is Product.EmptyProduct)
                 return NotFound();
-            return CreatedAtAction(nameof(GetById), Product);
+            return Ok(Product);
         }
 
         [HttpPut("{id}")]

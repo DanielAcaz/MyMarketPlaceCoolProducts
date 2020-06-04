@@ -22,15 +22,18 @@ namespace MyMarketPlaceCoolProducts
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        { 
+            services.AddSingleton<IService, ProductService>();
+            services.AddSingleton<IRepository<Product, long>, MemoryProductRepository>();
             services.AddDbContext<ProductDbContext>(opt =>
                 opt.UseInMemoryDatabase("Products")
             );
-            
+            var options = new DbContextOptionsBuilder<ProductDbContext>()
+                .UseInMemoryDatabase(databaseName: "Products")
+                .Options;
+            ProductDbContext ProductDbContext = new ProductDbContext(options);
+            services.AddSingleton<ProductDbContext>(ProductDbContext);
             services.AddControllers();
-            services.AddSingleton<IService, ProductService>();
-            services.AddSingleton<IRepository<Product, long>, MemoryProductRepository>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
