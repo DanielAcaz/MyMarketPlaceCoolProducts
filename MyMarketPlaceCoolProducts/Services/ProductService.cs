@@ -1,64 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using MyMarketPlaceCoolProducts.Error;
 using MyMarketPlaceCoolProducts.Model;
+using MyMarketPlaceCoolProducts.Repositories;
 
 namespace MyMarketPlaceCoolProducts.Services
 {
     public class ProductService : IService
     {
 
-        private static IList<Product> Products = new List<Product>(new Product[]
-            {
-                Product.BuildProduct("Produto1", "DescricaoDoProduto1", "ImagemDoProduto1", 100.0),
-                Product.BuildProduct("Produto2", "DescricaoDoProduto2", "ImagemDoProduto2", 100.0),
-                Product.BuildProduct("produto2", "DescricaoDoProduto3", "ImagemDoProduto3", 100.0)
-            });
+        private IRepository<Product, long> Repository;
 
-        public ProductService()
+        public ProductService(IRepository<Product, long> _Repository)
         {
+            Repository = _Repository;
         }
 
         public IEnumerable<Product> GetProducts()
         {
-            return Products;
+            return Repository.FindAll();
         }
 
         public Product DeleteById(long _Id)
         {
-            Product productWillDeleted = SearchProductById(_Id);
-            Products.Remove(productWillDeleted);
-            return productWillDeleted;
+            if(Repository.RemoveOneById(_Id))
+                return Repository.FindById(_Id);
+            return new Product.EmptyProduct();
         }
 
         public Product CreateProduct(Product _Product)
         {
-            Product NewProduct = Product.BuildProduct(
-                _Product.Title,
-                _Product.Description,
-                _Product.ImageUrl,
-                _Product.Price
-            );
-
+            Product NewProduct = Repository.InsertOne(_Product);
             if (NewProduct is Product.EmptyProduct)
                 throw new InvalidProductException("This product is invalid!");
-
-            Products.Add(NewProduct);
-
             return NewProduct;
         }
 
         public Product GetById(long _Id)
         {
-            return SearchProductById(_Id);
+            return Repository.FindById(_Id);
         }
 
-        private Product SearchProductById(long _Id)
+        public Product UpdateProduct(Product _Product, long Id)
         {
-            return Products.DefaultIfEmpty(new Product.EmptyProduct())
-                .Where(product => product.GetId() == _Id)
-                .FirstOrDefault();
+            Product Product = Repository.UpdateOne(_Product, Id);
+            if (Product is Product.EmptyProduct)
+                throw new InvalidProductException("This product is invalid!");
+            return Product;
         }
     }
 }

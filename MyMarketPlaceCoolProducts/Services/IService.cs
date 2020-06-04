@@ -13,5 +13,7 @@ namespace MyMarketPlaceCoolProducts.Services
         Product CreateProduct(Product _Product);
 
         Product GetById(long _Id);
+
+        Product UpdateProduct(Product Product, long Id);
     }
 }

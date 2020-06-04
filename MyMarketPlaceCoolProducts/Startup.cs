@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyMarketPlaceCoolProducts.DAO;
+using MyMarketPlaceCoolProducts.Model;
+using MyMarketPlaceCoolProducts.Repositories;
 using MyMarketPlaceCoolProducts.Services;
 
 namespace MyMarketPlaceCoolProducts
@@ -26,6 +28,7 @@ namespace MyMarketPlaceCoolProducts
             );
             services.AddControllers();
             services.AddSingleton<IService, ProductService>();
+            services.AddSingleton<IRepository<Product, long>, StaticProductRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

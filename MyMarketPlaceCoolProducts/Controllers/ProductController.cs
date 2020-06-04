@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using MyMarketPlaceCoolProducts.Error;
 using MyMarketPlaceCoolProducts.Model;
@@ -61,5 +59,15 @@ namespace MyMarketPlaceCoolProducts.Controllers
             return CreatedAtAction(nameof(GetById), Product);
         }
 
+        [HttpPut("{id}")]
+        public ActionResult<Product> UpdateProduct(long Id, [FromBody]
+            Product Product)
+        {
+            return CreatedAtRoute(
+                nameof(GetById),
+                new { id = Id },
+                Service.UpdateProduct(Product, Id));
+            
+        }
     }
 }
