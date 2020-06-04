@@ -22,8 +22,10 @@ namespace MyMarketPlaceCoolProducts.Services
 
         public Product DeleteById(long _Id)
         {
-            if(Repository.RemoveOneById(_Id))
-                return Repository.FindById(_Id);
+            Product Product = Repository.FindById(_Id);
+            if(!(Product is Product.EmptyProduct))
+                if (Repository.RemoveOne(Product))
+                    return Repository.FindById(_Id);
             return new Product.EmptyProduct();
         }
 
@@ -42,10 +44,18 @@ namespace MyMarketPlaceCoolProducts.Services
 
         public Product UpdateProduct(Product _Product, long Id)
         {
-            Product Product = Repository.UpdateOne(_Product, Id);
-            if (Product is Product.EmptyProduct)
+            Product Product = Repository.FindById(Id);
+            if(Product is Product.EmptyProduct)
                 throw new InvalidProductException("This product is invalid!");
-            return Product;
+
+            Product.Title = _Product.Title;
+            Product.ImageUrl = _Product.ImageUrl;
+            Product.Description = _Product.Description;
+            Product.Price = _Product.Price;
+
+            Product ProductUpdated = Repository.UpdateOne(Product, Id);
+
+            return ProductUpdated;
         }
     }
 }

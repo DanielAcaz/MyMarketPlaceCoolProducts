@@ -26,9 +26,11 @@ namespace MyMarketPlaceCoolProducts
             services.AddDbContext<ProductDbContext>(opt =>
                 opt.UseInMemoryDatabase("Products")
             );
+            
             services.AddControllers();
             services.AddSingleton<IService, ProductService>();
-            services.AddSingleton<IRepository<Product, long>, StaticProductRepository>();
+            services.AddSingleton<IRepository<Product, long>, MemoryProductRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

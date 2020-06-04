@@ -12,8 +12,6 @@ namespace MyMarketPlaceCoolProducts.Repositories
 
         T InsertOne(T t);
 
-        bool RemoveOneById(Id _);
-
         bool RemoveOne(T t);
 
         T UpdateOne(T t, Id _);

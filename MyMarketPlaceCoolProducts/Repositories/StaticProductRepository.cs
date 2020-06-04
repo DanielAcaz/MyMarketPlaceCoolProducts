@@ -48,11 +48,6 @@ namespace MyMarketPlaceCoolProducts.Repositories
             return Products.Remove(Product);
         }
 
-        public bool RemoveOneById(long _Id)
-        {
-            return Products.Remove(this.FindById(_Id));
-        }
-
         public Product UpdateOne(Product _Product, long _Id)
         {
             Product Product = FindById(_Id);
