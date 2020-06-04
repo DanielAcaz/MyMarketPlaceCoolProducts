@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using MyMarketPlaceCoolProducts.Error;
 using MyMarketPlaceCoolProducts.Model;
-using MyMarketPlaceCoolProducts.Services;
 
 namespace MyMarketPlaceCoolProducts.Controllers
 {
@@ -10,64 +10,52 @@ namespace MyMarketPlaceCoolProducts.Controllers
     [Route("[controller]")]
     public class ProductController : ControllerBase
     {
-        readonly IService Service;
 
-        public ProductController(IService _Service)
+        private static IList<Product> Products = new List<Product>(new Product[]
+            {
+                new Product("Produto1", "DescricaoDoProduto1", "ImagemDoProduto1", 100.0),
+                new Product("Produto2", "DescricaoDoProduto2", "ImagemDoProduto2", 100.0),
+                new Product("produto2", "DescricaoDoProduto3", "ImagemDoProduto3", 100.0)
+            });
+
+        public ProductController()
         {
-            Service = _Service;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Product>> Get()
+        public IList<Product> Get()
         {
-            return CreatedAtAction(nameof(Get), Service.GetProducts());
+            return Products;
         }
 
-        [HttpDelete("{_Id}")]
-        public IActionResult DeleteById(long _Id)
+        [HttpDelete]
+        [Route("{_Id}")]
+        public Product DeleteById(long _Id)
         {
-            Product ProductDeleted = Service.DeleteById(_Id);
-            if (ProductDeleted is Product.EmptyProduct)
-                return NotFound();
-            return NoContent();
+            Product productWillDeleted = Products
+                            .Where(product => product.GetId() == _Id)
+                            .FirstOrDefault();
+            if(Products.Remove(productWillDeleted))
+            {
+                return productWillDeleted;
+            }
+            throw new Exception("Cannot Delete This Product");
+            
         }
 
         [HttpPost]
-        public ActionResult<Product> CreateProduct([FromBody] Product _Product)
+        public Product CreateProduct([FromBody] Product _product)
         {
-            try
-            {
-                Product Product = Service.CreateProduct(_Product);
-                return base.CreatedAtRoute(nameof(GetById),
-                    new { id = _Product.Id },
-                    Product);
-            }
-            catch (InvalidProductException Error)
-            {
-                return BadRequest(Error.Message);
-            }
+            Product newProduct = new Product(
+                _product.Title,
+                _product.Description,
+                _product.ImageUrl,
+                _product.Price
+            );
 
-            
-        }
+            Products.Add(newProduct);
 
-        [HttpGet("{id}", Name = nameof(GetById))]
-        public ActionResult<Product> GetById(long _Id)
-        {
-            Product Product = Service.GetById(_Id);
-            if (Product is Product.EmptyProduct)
-                return NotFound();
-            return CreatedAtAction(nameof(GetById), Product);
-        }
-
-        [HttpPut("{id}")]
-        public ActionResult<Product> UpdateProduct(long Id, [FromBody]
-            Product Product)
-        {
-            return CreatedAtRoute(
-                nameof(GetById),
-                new { id = Id },
-                Service.UpdateProduct(Product, Id));
-            
+            return newProduct;
         }
     }
 }

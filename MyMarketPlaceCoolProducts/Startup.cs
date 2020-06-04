@@ -1,13 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MyMarketPlaceCoolProducts.DAO;
-using MyMarketPlaceCoolProducts.Model;
-using MyMarketPlaceCoolProducts.Repositories;
-using MyMarketPlaceCoolProducts.Services;
+using Microsoft.Extensions.Logging;
 
 namespace MyMarketPlaceCoolProducts
 {
@@ -23,12 +25,7 @@ namespace MyMarketPlaceCoolProducts
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ProductDbContext>(opt =>
-                opt.UseInMemoryDatabase("Products")
-            );
             services.AddControllers();
-            services.AddSingleton<IService, ProductService>();
-            services.AddSingleton<IRepository<Product, long>, StaticProductRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

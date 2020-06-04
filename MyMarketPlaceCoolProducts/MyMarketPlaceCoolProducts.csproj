@@ -7,16 +7,5 @@
 
   <ItemGroup>
     <Folder Include="Model\" />
-    <Folder Include="DAO\" />
-    <Folder Include="Services\" />
-    <Folder Include="Error\" />
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.4" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="ProductContext.cs" />
   </ItemGroup>
 </Project>
