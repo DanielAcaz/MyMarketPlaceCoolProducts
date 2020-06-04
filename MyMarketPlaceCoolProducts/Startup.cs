@@ -25,9 +25,6 @@ namespace MyMarketPlaceCoolProducts
         { 
             services.AddSingleton<IService, ProductService>();
             services.AddSingleton<IRepository<Product, long>, MemoryProductRepository>();
-            services.AddDbContext<ProductDbContext>(opt =>
-                opt.UseInMemoryDatabase("Products")
-            );
             var options = new DbContextOptionsBuilder<ProductDbContext>()
                 .UseInMemoryDatabase(databaseName: "Products")
                 .Options;

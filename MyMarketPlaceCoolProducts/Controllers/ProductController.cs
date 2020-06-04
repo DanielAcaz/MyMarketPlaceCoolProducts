@@ -49,9 +49,9 @@ namespace MyMarketPlaceCoolProducts.Controllers
         }
 
         [HttpGet("{id}", Name = nameof(GetById))]
-        public ActionResult<Product> GetById(long _Id)
+        public ActionResult<Product> GetById(long Id)
         {
-            Product Product = Service.GetById(_Id);
+            Product Product = Service.GetById(Id);
             if (Product is Product.EmptyProduct)
                 return NotFound();
             return Ok(Product);
