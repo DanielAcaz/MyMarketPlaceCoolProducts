@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using MyMarketPlaceCoolProducts.Model;
+using MyMarketPlaceCoolProducts.Models;
 
 namespace MyMarketPlaceCoolProducts.DAO
 {

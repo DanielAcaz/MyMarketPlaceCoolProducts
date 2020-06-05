@@ -6,7 +6,7 @@
 
 
   <ItemGroup>
-    <Folder Include="Model\" />
+    <Folder Include="Models\" />
     <Folder Include="DAO\" />
     <Folder Include="Services\" />
     <Folder Include="Error\" />
@@ -15,8 +15,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.4" />
+    <PackageReference Include="MongoDB.Driver" Version="2.10.4" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="ProductContext.cs" />
     <Compile Remove="ProductContext.cs" />
   </ItemGroup>
 </Project>

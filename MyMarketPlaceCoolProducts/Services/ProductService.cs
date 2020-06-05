@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using MyMarketPlaceCoolProducts.Error;
-using MyMarketPlaceCoolProducts.Model;
+using MyMarketPlaceCoolProducts.Models;
 using MyMarketPlaceCoolProducts.Repositories;
 
 namespace MyMarketPlaceCoolProducts.Services
@@ -8,9 +8,9 @@ namespace MyMarketPlaceCoolProducts.Services
     public class ProductService : IService
     {
 
-        private IRepository<Product, long> Repository;
+        private IRepository<Product, string> Repository;
 
-        public ProductService(IRepository<Product, long> _Repository)
+        public ProductService(IRepository<Product, string> _Repository)
         {
             Repository = _Repository;
         }
@@ -20,7 +20,7 @@ namespace MyMarketPlaceCoolProducts.Services
             return Repository.FindAll();
         }
 
-        public Product DeleteById(long _Id)
+        public Product DeleteById(string _Id)
         {
             Product Product = Repository.FindById(_Id) ?? new Product.EmptyProduct();
             if(!(Product is Product.EmptyProduct))
@@ -37,12 +37,12 @@ namespace MyMarketPlaceCoolProducts.Services
             return NewProduct;
         }
 
-        public Product GetById(long _Id)
+        public Product GetById(string _Id)
         {
             return Repository.FindById(_Id);
         }
 
-        public Product UpdateProduct(Product _Product, long Id)
+        public Product UpdateProduct(Product _Product, string Id)
         {
             Product Product = Repository.FindById(Id) ?? new Product.EmptyProduct();
             if(Product is Product.EmptyProduct)

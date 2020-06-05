@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MyMarketPlaceCoolProducts.DAO;
-using MyMarketPlaceCoolProducts.Model;
+using MyMarketPlaceCoolProducts.Models;
 
 namespace MyMarketPlaceCoolProducts.Repositories
 {
-    public class MemoryProductRepository : IRepository<Product, long>
+    public class MemoryProductRepository : IRepository<Product, string>
     {
         private readonly ProductDbContext Context;
 
@@ -18,13 +18,20 @@ namespace MyMarketPlaceCoolProducts.Repositories
 
         public IList<Product> FindAll() => Context.Products.ToListAsync().Result;
 
-        public Product FindById(long Id) => Context.Products.FindAsync(Id).Result;
+        public Product FindById(string Id) => Context.Products.FindAsync(Id).Result;
 
         public Product InsertOne(Product _Product)
         {
+            _Product.Id = GenerateId();
             Product Product = Context.Products.Add(_Product).Entity;
             _ = FlushChangesAsync();
             return Product;
+        }
+
+        private string GenerateId()
+        {
+            return "ID" + DateTime.Now.ToString("yyyyMMddHHmmssffff")
+                + new Random().Next(1, 1000);
         }
 
         public bool RemoveOne(Product _Product)
@@ -34,7 +41,7 @@ namespace MyMarketPlaceCoolProducts.Repositories
             return true;
         }
 
-        public Product UpdateOne(Product _Product, long Id)
+        public Product UpdateOne(Product _Product, string Id)
         {
             _Product.Id = Id;
             Context.Entry(_Product).State = EntityState.Modified;

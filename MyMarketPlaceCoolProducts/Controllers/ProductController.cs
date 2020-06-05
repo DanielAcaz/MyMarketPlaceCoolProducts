@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using MyMarketPlaceCoolProducts.Error;
-using MyMarketPlaceCoolProducts.Model;
+using MyMarketPlaceCoolProducts.Models;
 using MyMarketPlaceCoolProducts.Services;
 
 namespace MyMarketPlaceCoolProducts.Controllers
@@ -21,10 +21,10 @@ namespace MyMarketPlaceCoolProducts.Controllers
         public ActionResult<IEnumerable<Product>> Get() =>
             Ok(Service.GetProducts());
 
-        [HttpDelete("{_Id}")]
-        public IActionResult DeleteById(long _Id)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteById(string Id)
         {
-            Product ProductDeleted = Service.DeleteById(_Id);
+            Product ProductDeleted = Service.DeleteById(Id);
             if (ProductDeleted is Product.EmptyProduct)
                 return NotFound();
             return NoContent();
@@ -36,7 +36,9 @@ namespace MyMarketPlaceCoolProducts.Controllers
             try
             {
                 Product Product = Service.CreateProduct(_Product);
-                return base.CreatedAtRoute(nameof(GetById),
+                _Product.Id = Product.Id;
+                return CreatedAtRoute(
+                    nameof(GetById),
                     new { id = _Product.Id },
                     Product);
             }
@@ -49,16 +51,16 @@ namespace MyMarketPlaceCoolProducts.Controllers
         }
 
         [HttpGet("{id}", Name = nameof(GetById))]
-        public ActionResult<Product> GetById(long Id)
+        public ActionResult<Product> GetById(string id)
         {
-            Product Product = Service.GetById(Id);
+            Product Product = Service.GetById(id);
             if (Product is Product.EmptyProduct)
                 return NotFound();
             return Ok(Product);
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Product> UpdateProduct(long Id, [FromBody]
+        public ActionResult<Product> UpdateProduct(string Id, [FromBody]
             Product Product)
         {
             return CreatedAtRoute(

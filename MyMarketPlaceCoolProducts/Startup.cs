@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyMarketPlaceCoolProducts.DAO;
-using MyMarketPlaceCoolProducts.Model;
+using MyMarketPlaceCoolProducts.Models;
 using MyMarketPlaceCoolProducts.Repositories;
 using MyMarketPlaceCoolProducts.Services;
 
@@ -24,13 +24,13 @@ namespace MyMarketPlaceCoolProducts
         public void ConfigureServices(IServiceCollection services)
         { 
             services.AddSingleton<IService, ProductService>();
-            services.AddSingleton<IRepository<Product, long>, MemoryProductRepository>();
+            services.AddSingleton<IRepository<Product, string>, MemoryProductRepository>();
             var options = new DbContextOptionsBuilder<ProductDbContext>()
                 .UseInMemoryDatabase(databaseName: "Products")
                 .Options;
             ProductDbContext ProductDbContext = new ProductDbContext(options);
             services.AddSingleton<ProductDbContext>(ProductDbContext);
-            services.AddControllers();
+            services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
