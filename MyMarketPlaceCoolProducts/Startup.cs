@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using MyMarketPlaceCoolProducts.Creationals;
 using MyMarketPlaceCoolProducts.DAO;
 using MyMarketPlaceCoolProducts.DTO;
@@ -41,6 +42,16 @@ namespace MyMarketPlaceCoolProducts
             ProductDbContext ProductDbContext = new ProductDbContext(options);
             services.AddSingleton<ProductDbContext>(ProductDbContext);
             services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Product API of MyStore Project",
+                    Description =  "Api of Product Domain in MyStore Project with CRUC operations",
+                    Version = "0.0.1"
+                });
+             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +61,13 @@ namespace MyMarketPlaceCoolProducts
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger MyStore");
+            });
 
             app.UseHttpsRedirection();
 
