@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using MyMarketPlaceCoolProducts.DTO;
 using MyMarketPlaceCoolProducts.Error;
 using MyMarketPlaceCoolProducts.Models;
 using MyMarketPlaceCoolProducts.Services;
+using static MyMarketPlaceCoolProducts.Creationals.ProductFactory;
 
 namespace MyMarketPlaceCoolProducts.Controllers
 {
@@ -18,24 +20,31 @@ namespace MyMarketPlaceCoolProducts.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Product>> Get() =>
+        public ActionResult<IEnumerable<ProductDTO>> Get() =>
             Ok(Service.GetProducts());
 
         [HttpDelete("{id}")]
         public IActionResult DeleteById(string Id)
         {
-            Product ProductDeleted = Service.DeleteById(Id);
-            if (ProductDeleted is Product.EmptyProduct)
-                return NotFound();
-            return NoContent();
+            try
+            {
+                ProductDTO ProductDeleted = Service.DeleteById(Id);
+                if (ProductDeleted is EmptyProduct)
+                    return NotFound();
+                return NoContent();
+            }
+            catch (InvalidProductException Error)
+            {
+                return BadRequest(Error.Message);
+            }
         }
 
         [HttpPost]
-        public ActionResult<Product> CreateProduct([FromBody] Product _Product)
+        public ActionResult<Product> CreateProduct([FromBody] ProductDTO _Product)
         {
             try
             {
-                Product Product = Service.CreateProduct(_Product);
+                ProductDTO Product = Service.CreateProduct(_Product);
                 _Product.Id = Product.Id;
                 return CreatedAtRoute(
                     nameof(GetById),
@@ -51,23 +60,29 @@ namespace MyMarketPlaceCoolProducts.Controllers
         }
 
         [HttpGet("{id}", Name = nameof(GetById))]
-        public ActionResult<Product> GetById(string id)
+        public ActionResult<ProductDTO> GetById(string id)
         {
-            Product Product = Service.GetById(id);
-            if (Product is Product.EmptyProduct)
+            ProductDTO Product = Service.GetById(id);
+            if (Product is EmptyProduct)
                 return NotFound();
             return Ok(Product);
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Product> UpdateProduct(string Id, [FromBody]
-            Product Product)
+        public ActionResult<ProductDTO> UpdateProduct(string Id, [FromBody]
+            ProductDTO Product)
         {
-            return CreatedAtRoute(
-                nameof(GetById),
-                new { id = Id },
-                Service.UpdateProduct(Product, Id));
-            
+            try
+            {
+                return CreatedAtRoute(
+                    nameof(GetById),
+                    new { id = Id },
+                    Service.UpdateProduct(Product, Id));
+            }
+            catch (InvalidProductException Error)
+            {
+                return BadRequest(Error.Message);
+            }
         }
     }
 }

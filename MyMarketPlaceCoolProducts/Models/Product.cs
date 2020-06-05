@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using System;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace MyMarketPlaceCoolProducts.Models
@@ -8,56 +9,31 @@ namespace MyMarketPlaceCoolProducts.Models
 
         public Product()
         {
+            Secret = "SECRET" + DateTime.Now.ToString("yyyyMMddHHmmssffff")
+                + new Random().Next(1, 1000);
         }
-
-        private Product(string title, string description, string imageUrl, double price)
-        {
-            Title = title;
-            Description = description;
-            ImageUrl = imageUrl;
-            Price = price;
-        }
-
 
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
         [BsonElement("title")]
+        [BsonRequired()]
         public string Title { get; set; }
 
         [BsonElement("description")]
+        [BsonRequired()]
         public string Description { get; set; }
 
         [BsonElement("imageUrl")]
+        [BsonRequired()]
         public string ImageUrl { get; set; }
 
         [BsonElement("price")]
+        [BsonRequired()]
         public double Price { get; set; }
 
-        public static Product BuildProduct(string Title,
-            string Description, string ImageUrl, double Price)
-        {
-
-            if(string.IsNullOrEmpty(Title) ||
-                string.IsNullOrEmpty(Description) ||
-                string.IsNullOrEmpty(ImageUrl) ||
-                double.IsNaN(Price))
-            {
-                return new EmptyProduct();
-            }
-
-            return new Product(Title, Description, ImageUrl, Price);
-        }
-
-        public class EmptyProduct : Product
-        {
-            internal EmptyProduct() :
-                base(string.Empty, string.Empty, string.Empty, 0)
-            {
-
-            }
-        }
-
+        [BsonElement("secret")]
+        public string Secret { get;}
     }
 }

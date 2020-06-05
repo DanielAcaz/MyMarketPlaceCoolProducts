@@ -20,10 +20,11 @@ namespace MyMarketPlaceCoolProducts.Repositories
 
         public Product FindById(string Id) => Context.Products.FindAsync(Id).Result;
 
-        public Product InsertOne(Product _Product)
+        public Product InsertOne(Product product)
         {
-            _Product.Id = GenerateId();
-            Product Product = Context.Products.Add(_Product).Entity;
+            if (ProductIsInvalid(product)) return new Product();
+            product.Id = GenerateId();
+            Product Product = Context.Products.Add(product).Entity;
             _ = FlushChangesAsync();
             return Product;
         }
@@ -41,17 +42,24 @@ namespace MyMarketPlaceCoolProducts.Repositories
             return true;
         }
 
-        public Product UpdateOne(Product _Product, string Id)
+        public Product UpdateOne(Product product, string Id)
         {
-            _Product.Id = Id;
-            Context.Entry(_Product).State = EntityState.Modified;
+            if (ProductIsInvalid(product)) return new Product();
+            product.Id = Id;
+            Context.Entry(product).State = EntityState.Modified;
             _ = FlushChangesAsync();
-            return _Product;
+            return product;
         }
 
         private async Task FlushChangesAsync()
         {
             await Context.SaveChangesAsync();
         }
+
+        private bool ProductIsInvalid(Product product) =>
+                string.IsNullOrEmpty(product.Title) ||
+                string.IsNullOrEmpty(product.Description) ||
+                string.IsNullOrEmpty(product.ImageUrl) ||
+                double.IsNaN(product.Price);
     }
 }

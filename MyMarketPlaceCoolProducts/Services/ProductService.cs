@@ -1,61 +1,85 @@
 ﻿using System.Collections.Generic;
+using MyMarketPlaceCoolProducts.Creationals;
+using MyMarketPlaceCoolProducts.DTO;
 using MyMarketPlaceCoolProducts.Error;
 using MyMarketPlaceCoolProducts.Models;
 using MyMarketPlaceCoolProducts.Repositories;
+using static MyMarketPlaceCoolProducts.Creationals.ProductFactory;
 
 namespace MyMarketPlaceCoolProducts.Services
 {
     public class ProductService : IService
     {
 
-        private IRepository<Product, string> Repository;
+        private readonly IRepository<Product, string> _repository;
+        private readonly IFactory<Product, ProductDTO> _factory; 
 
-        public ProductService(IRepository<Product, string> _Repository)
+        public ProductService(IRepository<Product, string> repository, IFactory<Product, ProductDTO> factory)
         {
-            Repository = _Repository;
+            _repository = repository;
+            _factory = factory;
         }
 
-        public IEnumerable<Product> GetProducts()
+        public IEnumerable<ProductDTO> GetProducts()
         {
-            return Repository.FindAll();
+            return _factory.Create(_repository.FindAll());
         }
 
-        public Product DeleteById(string _Id)
+        public ProductDTO DeleteById(string id)
         {
-            Product Product = Repository.FindById(_Id) ?? new Product.EmptyProduct();
-            if(!(Product is Product.EmptyProduct))
-                if (Repository.RemoveOne(Product))
-                    return Repository.FindById(_Id);
-            return new Product.EmptyProduct();
-        }
-
-        public Product CreateProduct(Product _Product)
-        {
-            Product NewProduct = Repository.InsertOne(_Product);
-            if (NewProduct is Product.EmptyProduct)
+            Product product = _repository.FindById(id);
+            ProductDTO productDTO = _factory.Create(product);
+            if (productDTO is EmptyProduct)
                 throw new InvalidProductException("This product is invalid!");
-            return NewProduct;
+            if (_repository.RemoveOne(product))
+            {
+                return productDTO;
+            }
+            throw new InvalidProductException("Cannot remove this Product");
+
+
         }
 
-        public Product GetById(string _Id)
+        public ProductDTO CreateProduct(ProductDTO productDTO)
         {
-            return Repository.FindById(_Id);
+            Product newProduct = _repository
+                .InsertOne(_factory.Create(productDTO));
+
+            ProductDTO newProductDTO = _factory.Create(newProduct);
+            if (newProductDTO is EmptyProduct)
+                throw new InvalidProductException("Cannot create this Product");
+            return newProductDTO;
         }
 
-        public Product UpdateProduct(Product _Product, string Id)
+        public ProductDTO GetById(string id)
         {
-            Product Product = Repository.FindById(Id) ?? new Product.EmptyProduct();
-            if(Product is Product.EmptyProduct)
+            ProductDTO productDTO = _factory
+                .Create(_repository.FindById(id));
+
+            if(productDTO is EmptyProduct)
+                throw new InvalidProductException("Cannot found this Product");
+            return productDTO;
+        }
+
+        public ProductDTO UpdateProduct(ProductDTO productDTO, string id)
+        {
+            Product product = _repository.FindById(id);
+            ProductDTO productDTOUpdate = _factory.Create(product);
+            if (productDTOUpdate is EmptyProduct)
                 throw new InvalidProductException("This product is invalid!");
 
-            Product.Title = _Product.Title;
-            Product.ImageUrl = _Product.ImageUrl;
-            Product.Description = _Product.Description;
-            Product.Price = _Product.Price;
+            product.Title = productDTO.Title;
+            product.ImageUrl = productDTO.ImageUrl;
+            product.Description = productDTO.Description;
+            product.Price = productDTO.Price;
 
-            Product ProductUpdated = Repository.UpdateOne(Product, Id);
+            Product productUpdated = _repository.UpdateOne(product, id);
 
-            return ProductUpdated;
+            ProductDTO productDTOUpdated = _factory.Create(productUpdated);
+            if (productDTOUpdated is EmptyProduct)
+                throw new InvalidProductException("This product is invalid!");
+
+            return productDTOUpdated;
         }
     }
 }

@@ -5,7 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using MyMarketPlaceCoolProducts.Creationals;
 using MyMarketPlaceCoolProducts.DAO;
+using MyMarketPlaceCoolProducts.DTO;
 using MyMarketPlaceCoolProducts.Models;
 using MyMarketPlaceCoolProducts.Repositories;
 using MyMarketPlaceCoolProducts.Services;
@@ -30,7 +32,9 @@ namespace MyMarketPlaceCoolProducts
                 sp.GetRequiredService<IOptions<ProductDbSettings>>().Value);
 
             services.AddSingleton<IService, ProductService>();
-            services.AddSingleton<IRepository<Product, string>, ProductRepository>();
+            services.AddSingleton<IRepository<Product, string>, MemoryProductRepository>();
+            services.AddSingleton<IFactory<Product, ProductDTO>, ProductFactory>();
+
             var options = new DbContextOptionsBuilder<ProductDbContext>()
                 .UseInMemoryDatabase(databaseName: "Products")
                 .Options;

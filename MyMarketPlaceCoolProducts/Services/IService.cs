@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using MyMarketPlaceCoolProducts.Models;
+﻿using System.Collections.Generic;
+using MyMarketPlaceCoolProducts.DTO;
 
 namespace MyMarketPlaceCoolProducts.Services
 {
     public interface IService
     {
-        IEnumerable<Product> GetProducts();
+        IEnumerable<ProductDTO> GetProducts();
 
-        Product DeleteById(string _Id);
+        ProductDTO DeleteById(string _Id);
 
-        Product CreateProduct(Product _Product);
+        ProductDTO CreateProduct(ProductDTO _Product);
 
-        Product GetById(string _Id);
+        ProductDTO GetById(string _Id);
 
-        Product UpdateProduct(Product Product, string Id);
+        ProductDTO UpdateProduct(ProductDTO Product, string Id);
     }
 }
