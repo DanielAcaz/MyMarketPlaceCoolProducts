@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using MyMarketPlaceCoolProducts.DAO;
 using MyMarketPlaceCoolProducts.Models;
 using MyMarketPlaceCoolProducts.Repositories;
@@ -22,9 +23,14 @@ namespace MyMarketPlaceCoolProducts
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        { 
+        {
+            services.Configure<ProductDbSettings>(
+                Configuration.GetSection(nameof(ProductDbSettings)));
+            services.AddSingleton<IProductDbSettings>(sp =>
+                sp.GetRequiredService<IOptions<ProductDbSettings>>().Value);
+
             services.AddSingleton<IService, ProductService>();
-            services.AddSingleton<IRepository<Product, string>, MemoryProductRepository>();
+            services.AddSingleton<IRepository<Product, string>, ProductRepository>();
             var options = new DbContextOptionsBuilder<ProductDbContext>()
                 .UseInMemoryDatabase(databaseName: "Products")
                 .Options;
