@@ -48,7 +48,7 @@ namespace MyMarketPlaceCoolProducts
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Product API of MyStore Project",
-                    Description =  "Api of Product Domain in MyStore Project with CRUC operations",
+                    Description =  "Api of Product Domain in MyStore Project with CRUD operations",
                     Version = "0.0.1"
                 });
              });
