@@ -22,13 +22,13 @@ namespace MyMarketPlaceCoolProducts.Services
 
         public IEnumerable<ProductDTO> GetProducts()
         {
-            return _factory.Create(_repository.FindAll());
+            return _factory.CreateBy(_repository.FindAll());
         }
 
         public ProductDTO DeleteById(string id)
         {
             Product product = _repository.FindById(id);
-            ProductDTO productDTO = _factory.Create(product);
+            ProductDTO productDTO = _factory.CreateBy(product);
             if (productDTO is EmptyProduct)
                 throw new InvalidProductException("This product is invalid!");
             if (_repository.RemoveOne(product))
@@ -43,9 +43,9 @@ namespace MyMarketPlaceCoolProducts.Services
         public ProductDTO CreateProduct(ProductDTO productDTO)
         {
             Product newProduct = _repository
-                .InsertOne(_factory.Create(productDTO));
+                .InsertOne(_factory.CreateBy(productDTO));
 
-            ProductDTO newProductDTO = _factory.Create(newProduct);
+            ProductDTO newProductDTO = _factory.CreateBy(newProduct);
             if (newProductDTO is EmptyProduct)
                 throw new InvalidProductException("Cannot create this Product");
             return newProductDTO;
@@ -54,7 +54,7 @@ namespace MyMarketPlaceCoolProducts.Services
         public ProductDTO GetById(string id)
         {
             ProductDTO productDTO = _factory
-                .Create(_repository.FindById(id));
+                .CreateBy(_repository.FindById(id));
 
             if(productDTO is EmptyProduct)
                 throw new InvalidProductException("Cannot found this Product");
@@ -64,7 +64,7 @@ namespace MyMarketPlaceCoolProducts.Services
         public ProductDTO UpdateProduct(ProductDTO productDTO, string id)
         {
             Product product = _repository.FindById(id);
-            ProductDTO productDTOUpdate = _factory.Create(product);
+            ProductDTO productDTOUpdate = _factory.CreateBy(product);
             if (productDTOUpdate is EmptyProduct)
                 throw new InvalidProductException("This product is invalid!");
 
@@ -75,7 +75,7 @@ namespace MyMarketPlaceCoolProducts.Services
 
             Product productUpdated = _repository.UpdateOne(product, id);
 
-            ProductDTO productDTOUpdated = _factory.Create(productUpdated);
+            ProductDTO productDTOUpdated = _factory.CreateBy(productUpdated);
             if (productDTOUpdated is EmptyProduct)
                 throw new InvalidProductException("This product is invalid!");
 

@@ -7,21 +7,27 @@ namespace MyMarketPlaceCoolProducts.Creationals
 {
     public class ProductFactory : IFactory<Product, ProductDTO>
     {
+
+        public static BuilderProduct Builder {
+            get => Builder ?? new BuilderProduct();
+            set => Builder = value;
+        }
+
         public ProductFactory()
         {
         }
 
-        public Product Create(ProductDTO dto)
+        public Product CreateBy(ProductDTO dto)
         {
             return BuildProduct(dto);
         }
 
-        public IList<Product> Create(IList<ProductDTO> dtos) =>
+        public IList<Product> CreateBy(IList<ProductDTO> dtos) =>
             new List<ProductDTO>(dtos).ConvertAll(dto => BuildProduct(dto));
 
 
         private static Product BuildProduct(ProductDTO dto) =>
-            new BuilderProduct()
+            Builder
                 .Title(dto.Title)
                 .Description(dto.Description)
                 .ImageUrl(dto.ImageUrl)
@@ -34,7 +40,7 @@ namespace MyMarketPlaceCoolProducts.Creationals
                 string.IsNullOrEmpty(product.ImageUrl) ||
                 double.IsNaN(product.Price);
 
-        public ProductDTO Create(Product product)
+        public ProductDTO CreateBy(Product product)
         {
             var productWillCreate = product ?? new Product();
             if (ProductIsInvalid(productWillCreate))
@@ -45,8 +51,8 @@ namespace MyMarketPlaceCoolProducts.Creationals
             return productDTO;
         }
 
-        public IList<ProductDTO> Create(IList<Product> products) =>
-            new List<Product>(products).ConvertAll(product => Create(product));
+        public IList<ProductDTO> CreateBy(IList<Product> products) =>
+            new List<Product>(products).ConvertAll(product => CreateBy(product));
 
         public class EmptyProduct : ProductDTO
         {

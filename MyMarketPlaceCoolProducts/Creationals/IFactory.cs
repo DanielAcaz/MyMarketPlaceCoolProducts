@@ -6,13 +6,13 @@ namespace MyMarketPlaceCoolProducts.Creationals
     public interface IFactory<T, I>
     {
 
-        T Create(I _);
+        T CreateBy(I _);
 
-        IList<T> Create(IList<I> _);
+        IList<T> CreateBy(IList<I> _);
 
-        I Create(T _);
+        I CreateBy(T _);
 
-        IList<I> Create(IList<T> _);
+        IList<I> CreateBy(IList<T> _);
     }
 
 }
